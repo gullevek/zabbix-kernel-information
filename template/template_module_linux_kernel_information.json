@@ -47,7 +47,7 @@
                             {
                                 "type": "JSONPATH",
                                 "parameters": [
-                                    "$.RunningKernel"
+                                    "$.LatestKernel"
                                 ]
                             }
                         ],
