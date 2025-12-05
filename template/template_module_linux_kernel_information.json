@@ -1,0 +1,159 @@
+{
+    "zabbix_export": {
+        "version": "7.0",
+        "template_groups": [
+            {
+                "uuid": "57b7ae836ca64446ba2c296389c009b7",
+                "name": "Templates/Modules"
+            }
+        ],
+        "templates": [
+            {
+                "uuid": "a646e8b58f53499ea895ed21f6c8b297",
+                "template": "Template Module Linux Kernel information",
+                "name": "Template Module Linux kernel information",
+                "description": "Collects information about the running and installed kernels\n\nNeeds the script \"kernel_info.sh\" installed",
+                "groups": [
+                    {
+                        "name": "Templates/Modules"
+                    }
+                ],
+                "items": [
+                    {
+                        "uuid": "67a846aa41aa4eb4bbac7666e6b764c6",
+                        "name": "Kernel: Collect JSON",
+                        "key": "kernel.collect_json",
+                        "delay": "5m",
+                        "history": "1d",
+                        "value_type": "TEXT",
+                        "trends": "0",
+                        "tags": [
+                            {
+                                "tag": "Application",
+                                "value": "Kernel"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "b3e29a491ad64fb8888fd81f1065e057",
+                        "name": "Kernel: Latest version",
+                        "type": "DEPENDENT",
+                        "key": "kernel[LatestVersion]",
+                        "delay": "0",
+                        "history": "1w",
+                        "value_type": "TEXT",
+                        "trends": "0",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.RunningKernel"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "kernel.collect_json"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Application",
+                                "value": "Kernel"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "66c8478d71c34fb183f1fea9c6eb39d4",
+                        "name": "Kernel: Reboot Needed",
+                        "type": "DEPENDENT",
+                        "key": "kernel[RebootNeeded]",
+                        "delay": "0",
+                        "valuemap": {
+                            "name": "KernelOutdated"
+                        },
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.RebootNeeded"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "kernel.collect_json"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Application",
+                                "value": "Kernel"
+                            }
+                        ],
+                        "triggers": [
+                            {
+                                "uuid": "7837b3d3cd7440b9b1dc341b175e13e9",
+                                "expression": "last(/Template Module Linux kernel information/kernel[RebootNeeded])=1",
+                                "name": "Kernel outdated, reboot needed",
+                                "priority": "WARNING",
+                                "manual_close": "YES",
+                                "tags": [
+                                    {
+                                        "tag": "Application",
+                                        "value": "Kernel"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "c3c183f755b84ec5a3ec52211ddec4d1",
+                        "name": "Kernel: Running version",
+                        "type": "DEPENDENT",
+                        "key": "kernel[RunningVersion]",
+                        "delay": "0",
+                        "history": "1w",
+                        "value_type": "TEXT",
+                        "trends": "0",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.RunningKernel"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "kernel.collect_json"
+                        },
+                        "tags": [
+                            {
+                                "tag": "Application",
+                                "value": "Application"
+                            }
+                        ]
+                    }
+                ],
+                "tags": [
+                    {
+                        "tag": "Application",
+                        "value": "Kernel"
+                    }
+                ],
+                "valuemaps": [
+                    {
+                        "uuid": "43678b4e23114ca6a49579e18ae4c2c1",
+                        "name": "KernelOutdated",
+                        "mappings": [
+                            {
+                                "value": "0",
+                                "newvalue": "OK"
+                            },
+                            {
+                                "value": "1",
+                                "newvalue": "Outdated"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
